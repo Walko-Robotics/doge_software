@@ -127,10 +127,10 @@ struct QuadrupedConfig {
 
   Rest rest;
 
-  double stand_height = 0.210;
+  double stand_height = 0.440;
 
-  double idle_x = 0.190;
-  double idle_y = 0.140;
+  double idle_x = 0.32821;
+  double idle_y = 0.19973;
 
   base::Point3D default_kp_N_m = {1000.0, 1000.0, 200.0};
   base::Point3D default_kd_N_m_s = {20.0, 20.0, 20.0};

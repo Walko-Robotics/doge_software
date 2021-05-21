@@ -608,30 +608,30 @@ class SimPi3hat : public mech::Pi3hatInterface {
     {1, 1.0},
     {2, 1.0},
     {3, 1.0},
-    {4, -1.0},
-    {5, -1.0},
-    {6, 1.0},
+    {4, 1.0},
+    {5, 1.0},
+    {6, -1.0},
     {7, -1.0},
-    {8, -1.0},
-    {9, 1.0},
+    {8, 1.0},
+    {9, -1.0},
     {10, 1.0},
-    {11, 1.0},
+    {11, -1.0},
     {12, 1.0},
         };
 
   std::map<int, double> torque_Nm_{
-    {1, 12.5},
-    {2, 22.2},
-    {3, 12.5},
-    {4, 12.5},
-    {5, 22.2},
-    {6, 12.5},
-    {7, 12.5},
-    {8, 22.2},
-    {9, 12.5},
-    {10, 12.5},
-    {11, 22.2},
-    {12, 12.5},
+    {1, 20.0},
+    {2, 20.0},
+    {3, 30.0},
+    {4, 20.0},
+    {5, 20.0},
+    {6, 30.0},
+    {7, 20.0},
+    {8, 20.0},
+    {9, 30.0},
+    {10, 20.0},
+    {11, 20.0},
+    {12, 30.0},
         };
 
   std::map<int, double> speed_dps_{
@@ -751,7 +751,7 @@ class SimulatorWindow::Impl : public dart::gui::glut::SimWindow {
       add_servo("_shoulder", leg_config.ik.shoulder.id, kNaN, kNaN);
       add_servo("_femur", leg_config.ik.femur.id, kNaN, kNaN);
       add_servo("_tibia", leg_config.ik.tibia.id,
-                base::Radians(-140), base::Radians(140));
+                base::Radians(-180), base::Radians(180));
     }
 
     boost::asio::post(

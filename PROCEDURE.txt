@@ -1,0 +1,87 @@
+BUILDING FOR HOST
+https://github.com/mjbots/quad
+
+./install-packages
+
+tools/bazel clean --expunge
+
+unset LD_LIBRARY_PATH
+
+tools/bazel test //simulator/... -j 3
+(-s if problems, more debug lines)
+
+tools/bazel test //... -j 3
+(-s if problems, more debug lines)
+
+
+RUNNING THE SIMULATOR
+./bazel-bin/simulator/simulator -c configs/quadruped.ini
+
+http://localhost:4778 --> Record data, will be recorded where the simulator has been launched
+
+Then :
+./bazel-bin/utils/tplot2 ~/doggit/quad_host/
+
+
+BUILDING FOR THE PI
+https://github.com/mjbots/quad/tree/main/docs/quada1#upgrading-software
+
+tools/bazel build --config pi -c opt //mech:quad_deploy.tar
+
+rsync -Pv -e "ssh -i utils/ssh/default.ssh"  \
+  bazel-out/armeabihf-opt/bin/mech/quad_deploy.tar pi@192.168.1.49:
+
+
+MANUALLY SAVE THE CHANGES AND CONFIGURATIONS BEFORE THAT LINE
+sudo -u pi tar xvf quad_deploy.tar
+
+
+
+LANCER LE PROGRAMME SUR LE ROBOT
+sudo bash
+cd ~/mech
+./start-robot.sh --quadruped_control.max_torque_Nm 10.0
+
+http://192.168.1.49:4778/
+
+
+
+
+On host-pc :
+- change, let's say, quadruped_control.cc to add a pose_R_hind
+- build for host : tools/bazel test //... -j 3
+- try on simulator with ./bazel-bin/simulator/simulator -c configs/quadruped.ini
+./bazel-out/k8-opt/bin/simulator/simulator -c configs/quadruped.ini
+
+If OK :
+- build for pi : tools/bazel build --config pi -c opt //mech:quad_deploy.tar
+- copy from bazel_out/.../mech/ to the pi
+- (considering everything in previous mech folder on the pi was saved) --> extract the .tar (sudo -u pi tar xvf quad_deploy.tar)
+
+No need to clean --expunge right ?
+
+
+----------------------------------------------------------------------------------
+
+Procédure sur le robot :
+- allumer le robot en position "turn on" : les jambes étendues
+
+- sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --zero-offset -t 1-12
+(normalement juste besoin d'un rezero mais ça coûte rien, on verra plus tard comment faire ça proprement)
+
+- mettre les épaules en position zéro (90°)
+
+sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --zero-offset -t 2
+sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --zero-offset -t 5
+sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --zero-offset -t 8
+sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --zero-offset -t 11
+
+- réétendre les jambes en position "turn on"
+
+- cd ~/mech
+./start-robot.sh
+
+
+-----------------------------------------------------------------------------------
+
+sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --dump-config -t 1-13 | grep "id.id"

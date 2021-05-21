@@ -147,7 +147,7 @@ dd::SkeletonPtr MakeRobot(const mech::QuadrupedConfig& config) {
           dd::BodyNode::AspectProperties("robot")).second;
 
   auto box =
-      std::make_shared<dd::BoxShape>(Eigen::Vector3d(0.230, 0.245, 0.140));
+      std::make_shared<dd::BoxShape>(Eigen::Vector3d(0.430, 0.27, 0.140));
   body->createShapeNodeWith<
     dd::VisualAspect, dd::CollisionAspect, dd::DynamicsAspect>(box);
 
@@ -175,7 +175,7 @@ dd::SkeletonPtr MakeFloor() {
   auto floor = dd::Skeleton::create("floor");
   auto body = floor->createJointAndBodyNodePair<dd::WeldJoint>(nullptr).second;
 
-  double floor_width = 320.0;
+  double floor_width = 600.0;
   double floor_height = 0.01;
   auto box = std::make_shared<dd::BoxShape>(
       Eigen::Vector3d(floor_width, floor_width, floor_height));
@@ -214,7 +214,7 @@ dd::SkeletonPtr MakeRamp(double peak_height) {
                   -std::asin(peak_height / ramp_length),
                   Eigen::Vector3d::UnitY()));
     tf.translation() = Eigen::Vector3d(
-        1.0, 0., -0.5 * ramp_height + 0.5 * peak_height);
+        3.0, 0., -0.5 * ramp_height + 0.5 * peak_height);
     body1->getParentJoint()->setTransformFromParentBodyNode(tf);
   }
 
@@ -234,7 +234,7 @@ dd::SkeletonPtr MakeRamp(double peak_height) {
                   std::asin(peak_height / ramp_length),
                   Eigen::Vector3d::UnitY()));
     tf.translation() = Eigen::Vector3d(
-        1.0 + std::sqrt(ramp_length * ramp_length - peak_height * peak_height),
+        3.0 + std::sqrt(ramp_length * ramp_length - peak_height * peak_height),
         0., 0.5 * ramp_height + 0.5 * peak_height);
     body2->getParentJoint()->setTransformFromParentBodyNode(tf);
   }
