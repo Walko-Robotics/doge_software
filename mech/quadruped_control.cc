@@ -760,6 +760,10 @@ class QuadrupedControl::Impl {
         DoControl_Backflip();
         break;
       }
+      case QM::kSitDown: {
+        DoControl_SitDown();
+        break;
+      }
       case QM::kNumModes: {
         mjlib::base::AssertNotReached();
       }
@@ -811,6 +815,7 @@ class QuadrupedControl::Impl {
       case QM::kRest:
       case QM::kJump:
       case QM::kWalk:
+      case QM::kSitDown:
       case QM::kBackflip: {
         // This can only be done from certain configurations, where we
         // know all four legs are on the ground.  Modify our command
@@ -874,6 +879,10 @@ class QuadrupedControl::Impl {
           status_.state.stand_up = {};
           break;
         }
+        //case QM::kSitDown: {
+        //  status_.state.sit_down = {};
+        //  break;
+        //}
         case QM::kJump: {
           status_.state.jump = {};
           break;
@@ -1076,6 +1085,47 @@ class QuadrupedControl::Impl {
       }
     };
   }
+
+  void DoControl_SitDown() {
+    std::vector<QC::Leg> legs_R = old_control_log_->legs_R;
+
+    if (legs_R.empty()) {
+      for (const auto& leg : context_->legs) {
+        QC::Leg leg_cmd_R;
+        leg_cmd_R.kp_N_m = config_.default_kp_N_m;
+        leg_cmd_R.kd_N_m_s = config_.default_kd_N_m_s;
+        leg_cmd_R.leg_id = leg.leg;
+        leg_cmd_R.power = true;
+        leg_cmd_R.position = leg.stand_up_R;
+        leg_cmd_R.velocity = base::Point3D();
+        leg_cmd_R.stance = 1.0;
+        legs_R.push_back(leg_cmd_R);
+      }
+    }
+
+    QuadrupedContext::MoveOptions move_options;
+    move_options.override_acceleration =
+        config_.stand_up.acceleration;
+
+    const bool done = context_->MoveLegsFixedSpeed(
+        &legs_R, config_.stand_up.velocity, [&]() {
+          std::vector<std::pair<int, base::Point3D>> result;
+          for (const auto& leg : context_->legs) {
+            base::Point3D pose = leg.stand_up_R;
+            pose.z() = config_.stand_height;
+            result.push_back(std::make_pair(leg.leg, pose));
+          }
+          return result;
+        }(),
+        move_options);
+
+    if (done) {
+      status_.state.stand_up.mode = QuadrupedState::StandUp::Mode::kDone;
+    }
+
+    ControlLegs_R(std::move(legs_R), context_->LevelDesiredRB());
+  }
+
 
   bool CheckPrepositioning() const {
     // We're done when all our joints are close enough.

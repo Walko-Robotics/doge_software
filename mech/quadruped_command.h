@@ -87,6 +87,8 @@ struct QuadrupedCommand {
 
     kBackflip = 10,
 
+    kSitDown = 11,
+
     kNumModes,
   };
 
@@ -281,6 +283,7 @@ struct IsEnum<mjmech::mech::QuadrupedCommand::Mode> {
         { M::kJump, "jump" },
         { M::kWalk, "walk" },
         { M::kBackflip, "backflip" },
+        { M::kSitDown, "sit_down" },
       }};
   }
 };
