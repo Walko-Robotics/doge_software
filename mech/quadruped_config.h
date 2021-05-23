@@ -127,6 +127,7 @@ struct QuadrupedConfig {
 
   Rest rest;
 
+  double sit_height = 0.10;
   double stand_height = 0.440;
 
   double idle_x = 0.32821;

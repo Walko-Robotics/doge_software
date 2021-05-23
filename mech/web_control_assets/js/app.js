@@ -528,6 +528,7 @@ class Application {
           }
           if (this._mode == "walk") { return "walk"; }
           if (this._mode == "pronk") { return "jump"; }
+          if (this._mode == "sit_down") { return "sit_down"; }
           return "zero_velocity";
         })(),
       },
@@ -599,6 +600,7 @@ class Application {
         if (cur == "rest") { return "idle" };
         if (cur == "walk") { return "walk" };
         if (cur == "jump") { return "pronk" };
+        if (cur == "sit_down") { return "sit_down" };
         return "stop";
       })();
       for (const mode_check  of document.getElementsByClassName("mode_check")) {
@@ -620,6 +622,7 @@ class Application {
         if (cur == "zero_velocity") { return "damped"; }
         if (cur == "rest") { return "idle"; }
         if (cur == "jump") { return "pronk"; }
+        if (cur == "sit_down") { return "sit_down"; }
         return cur;
       })() + ')';
     }
