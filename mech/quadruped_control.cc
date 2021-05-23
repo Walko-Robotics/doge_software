@@ -1112,7 +1112,7 @@ class QuadrupedControl::Impl {
           std::vector<std::pair<int, base::Point3D>> result;
           for (const auto& leg : context_->legs) {
             base::Point3D pose = leg.stand_up_R;
-            pose.z() = config_.stand_height;
+            pose.z() = config_.sit_height;
             result.push_back(std::make_pair(leg.leg, pose));
           }
           return result;
