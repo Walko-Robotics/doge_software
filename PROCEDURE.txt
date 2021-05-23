@@ -21,7 +21,7 @@ http://localhost:4778 --> Record data, will be recorded where the simulator has 
 
 Then :
 ./bazel-bin/utils/tplot2 ~/doggit/quad_host/
-
+./bazel-out/k8-opt/bin/utils/tplot2
 
 BUILDING FOR THE PI
 https://github.com/mjbots/quad/tree/main/docs/quada1#upgrading-software

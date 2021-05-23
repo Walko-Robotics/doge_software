@@ -95,6 +95,7 @@ QuadrupedState::Walk::Trot CalculateTrot(
   r.onevleg_time = r.swing_time - 2 * r.flight_time;
   r.speed = max_speed;
   return r;
+
 }
 
 /// This object exists to hold a bunch of state variables and make it

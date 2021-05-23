@@ -16,8 +16,8 @@ const CMD_MAX_RATE_Y = 0.2;
 const CMD_MAX_RATE_Z = Math.PI * 60 / 180.0;
 
 
-const CMD_MAX_POSE_YAW = Math.PI * 20 / 180.0;
-const CMD_MAX_POSE_PITCH = Math.PI * 11 / 180.0;
+const CMD_MAX_POSE_YAW = Math.PI * 40 / 180.0;
+const CMD_MAX_POSE_PITCH = Math.PI * 40 / 180.0;
 
 const TRANSLATION_EPSILON = 0.025;
 const ROTATION_EPSILON = Math.PI * 7.0 / 180.0;
