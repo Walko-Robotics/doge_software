@@ -1,3 +1,7 @@
+<WARNING> This work is based on https://github.com/mjbots/quad 
+
+
+
 mjbots quad
 ===========
 
