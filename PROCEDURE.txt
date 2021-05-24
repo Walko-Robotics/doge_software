@@ -23,10 +23,13 @@ Then :
 ./bazel-bin/utils/tplot2 ~/doggit/quad_host/
 ./bazel-out/k8-opt/bin/utils/tplot2
 
+AVEC VIDEO
+./bazel-out/k8-opt/bin/utils/tplot2 mjbots-quad-a1-20210523-104222.log -v ~/Téléchargements/VID_20210523_124221_rot.mp4 --voffset 0.7
+
 BUILDING FOR THE PI
 https://github.com/mjbots/quad/tree/main/docs/quada1#upgrading-software
 
-tools/bazel build --config pi -c opt //mech:quad_deploy.tar
+tools/bazel build --config pi -c opt //mech:quad_deploy.tar -j 3
 
 rsync -Pv -e "ssh -i utils/ssh/default.ssh"  \
   bazel-out/armeabihf-opt/bin/mech/quad_deploy.tar pi@192.168.1.49:
@@ -52,6 +55,7 @@ On host-pc :
 - build for host : tools/bazel test //... -j 3
 - try on simulator with ./bazel-bin/simulator/simulator -c configs/quadruped.ini
 ./bazel-out/k8-opt/bin/simulator/simulator -c configs/quadruped.ini
+
 
 If OK :
 - build for pi : tools/bazel build --config pi -c opt //mech:quad_deploy.tar
@@ -85,3 +89,5 @@ sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --zero-o
 -----------------------------------------------------------------------------------
 
 sudo moteus_tool --pi3hat-cfg '1=1,2,3;2=4,5,6;3=7,8,9;4=10,11,12;5=13' --dump-config -t 1-13 | grep "id.id"
+
+sudo moteus_tool --pi3hat-cfg '4=10,11,12,5;5=13' -t 5 --calibrate --cal-pow 0.8 --cal-bw-hz 2000
