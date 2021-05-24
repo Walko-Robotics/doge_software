@@ -1147,17 +1147,37 @@ class QuadrupedControl::Impl {
         return true;
       };
 
-      if (!check(leg.config.ik.shoulder.id,
-                 leg.resolved_stand_up_joints.shoulder_deg)) {
-        return false;
+      //FRONT LEGS
+      if (leg.config.leg == 0 || leg.config.leg == 1)
+      {
+        if (!check(leg.config.ik.shoulder.id,
+                   leg.resolved_stand_up_joints_front.shoulder_deg)) {
+          return false;
+        }
+        if (!check(leg.config.ik.femur.id,
+                   leg.resolved_stand_up_joints_front.femur_deg)) {
+          return false;
+        }
+        if (!check(leg.config.ik.tibia.id,
+                   leg.resolved_stand_up_joints_front.tibia_deg)) {
+          return false;
+        }
       }
-      if (!check(leg.config.ik.femur.id,
-                 leg.resolved_stand_up_joints.femur_deg)) {
-        return false;
-      }
-      if (!check(leg.config.ik.tibia.id,
-                 leg.resolved_stand_up_joints.tibia_deg)) {
-        return false;
+      //HIND LEGS
+      if (leg.config.leg == 2 || leg.config.leg == 3)
+      {
+        if (!check(leg.config.ik.shoulder.id,
+                   leg.resolved_stand_up_joints_hind.shoulder_deg)) {
+          return false;
+        }
+        if (!check(leg.config.ik.femur.id,
+                   leg.resolved_stand_up_joints_hind.femur_deg)) {
+          return false;
+        }
+        if (!check(leg.config.ik.tibia.id,
+                   leg.resolved_stand_up_joints_hind.tibia_deg)) {
+          return false;
+        }
       }
     }
     return true;
@@ -1200,20 +1220,49 @@ class QuadrupedControl::Impl {
           // Then move the other joints into position.
           add_joint(leg.config.ik.shoulder.id,
                     leg.shoulder_clearance_deg);
-          add_joint(leg.config.ik.femur.id,
-                    leg.resolved_stand_up_joints_front.femur_deg);
-          add_joint(leg.config.ik.tibia.id,
-                    leg.resolved_stand_up_joints_front.tibia_deg);
-          break;
+          //FRONT LEGS
+          if (leg.config.leg == 0 || leg.config.leg == 1)
+          {
+            add_joint(leg.config.ik.femur.id,
+                      leg.resolved_stand_up_joints_front.femur_deg);
+            add_joint(leg.config.ik.tibia.id,
+                      leg.resolved_stand_up_joints_front.tibia_deg);
+            break;
+          }
+          //HIND LEGS
+          if (leg.config.leg == 2 || leg.config.leg == 3)
+          {
+            add_joint(leg.config.ik.femur.id,
+                      leg.resolved_stand_up_joints_hind.femur_deg);
+            add_joint(leg.config.ik.tibia.id,
+                      leg.resolved_stand_up_joints_hind.tibia_deg);
+            break;
+          }
         }
         case 2: {
           // And finally put the shoulders back into place.
-          add_joint(leg.config.ik.shoulder.id,
-                  leg.resolved_stand_up_joints.shoulder_deg);
-          add_joint(leg.config.ik.femur.id,
-                    leg.resolved_stand_up_joints.femur_deg);
-          add_joint(leg.config.ik.tibia.id,
-                    leg.resolved_stand_up_joints.tibia_deg);
+          //FRONT LEGS
+          if (leg.config.leg == 0 || leg.config.leg == 1)
+          {
+            add_joint(leg.config.ik.shoulder.id,
+                    leg.resolved_stand_up_joints_front.shoulder_deg);
+            add_joint(leg.config.ik.femur.id,
+                      leg.resolved_stand_up_joints_front.femur_deg);
+            add_joint(leg.config.ik.tibia.id,
+                      leg.resolved_stand_up_joints_front.tibia_deg);
+            break;
+          }
+          //HIND LEGS
+          if (leg.config.leg == 2 || leg.config.leg == 3)
+          {
+            add_joint(leg.config.ik.shoulder.id,
+                    leg.resolved_stand_up_joints_hind.shoulder_deg);
+            add_joint(leg.config.ik.femur.id,
+                      leg.resolved_stand_up_joints_hind.femur_deg);
+            add_joint(leg.config.ik.tibia.id,
+                      leg.resolved_stand_up_joints_hind.tibia_deg);
+            break;
+          }
           break;
         }
       }
