@@ -88,7 +88,8 @@ struct QuadrupedConfig {
     // This pose is referenced to the leg in the front right and the
     // x/y positions should all be positive.  All other positions will
     // be symmetric about the x/y axes.
-    base::Point3D pose_R = {0.151, 0.219, 0.049};
+    base::Point3D pose_R_front = {0.151, 0.219, 0.049};
+    base::Point3D pose_R_hind = {-0.151, 0.219, 0.049};
     double velocity_dps = 60.0;
     double velocity = 0.150;
     double shoulder_clearance_deg = 52.0;
@@ -101,7 +102,8 @@ struct QuadrupedConfig {
 
     template <typename Archive>
     void Serialize(Archive* a) {
-      a->Visit(MJ_NVP(pose_R));
+      a->Visit(MJ_NVP(pose_R_front));
+      a->Visit(MJ_NVP(pose_R_hind));
       a->Visit(MJ_NVP(velocity_dps));
       a->Visit(MJ_NVP(velocity));
       a->Visit(MJ_NVP(shoulder_clearance_deg));
