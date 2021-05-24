@@ -52,8 +52,7 @@ struct QuadrupedContext : boost::noncopyable {
 
     base::Point3D stand_up_R;
     base::Point3D idle_R;
-    MammalJoint resolved_stand_up_joints_front;
-    MammalJoint resolved_stand_up_joints_hind;
+    MammalJoint resolved_stand_up_joints;
     double shoulder_clearance_deg = 0.0;
 
     Leg(const Config::Leg& config_in,
@@ -70,62 +69,41 @@ struct QuadrupedContext : boost::noncopyable {
       const Sophus::SE3d pose_RB;
       const auto pose_RG = pose_RB * config.pose_BG;
 
-      const base::Point3D pose_R_front = [&]() {
+      if (leg == 0 || leg == 1) //FRONT LEGS
+      {
+        const base::Point3D pose_R = [&]() {
         auto result = stand_up.pose_R_front;
         if (config.pose_BG.translation().y() < 0.0) { result.y() *= -1; }
         return result;
-      }();
+        }();
+      }
 
-      const base::Point3D pose_R_hind = [&]() {
+      if (leg == 2 || leg == 3) //FRONT LEGS
+      {
+        const base::Point3D pose_R = [&]() {
         auto result = stand_up.pose_R_hind;
         if (config.pose_BG.translation().y() < 0.0) { result.y() *= -1; }
         return result;
-      }();
-
-      const base::Point3D pose_G_front = pose_RG.inverse() * pose_R_front;
-      const base::Point3D pose_G_hind = pose_RG.inverse() * pose_R_hind;
-
-      IkSolver::Effector effector_G_front;
-      IkSolver::Effector effector_G_hind;
-
-      effector_G_front.pose = pose_G_front;
-      effector_G_hind.pose = pose_G_hind;
-
-      if (leg == 0 || leg == 1)
-      {
-        const auto resolved_front = ik.Inverse(effector_G_front, {});
-        auto get_resolved_front = [&](int id) {
-          MJ_ASSERT(!!resolved_front);
-          for (const auto& joint_angle : *resolved_front) {
-            if (joint_angle.id == id) { return joint_angle.angle_deg; }
-          }
-          mjlib::base::AssertNotReached();
-        };
-
-        resolved_stand_up_joints_front.shoulder_deg = get_resolved_front(config.ik.shoulder.id);
-        resolved_stand_up_joints_front.femur_deg = get_resolved_front(config.ik.femur.id);
-        resolved_stand_up_joints_front.tibia_deg = get_resolved_front(config.ik.tibia.id);
-
-        stand_up_R = pose_R_front;
+        }();
       }
 
-      if (leg == 2 || leg == 3)
-      {
-        const auto resolved_hind = ik.Inverse(effector_G_hind, {});
-        auto get_resolved_hind = [&](int id) {
-          MJ_ASSERT(!!resolved_hind);
-          for (const auto& joint_angle : *resolved_hind) {
-            if (joint_angle.id == id) { return joint_angle.angle_deg; }
-          }
-          mjlib::base::AssertNotReached();
-        };
+      const base::Point3D pose_G = pose_RG.inverse() * pose_R;
 
-        resolved_stand_up_joints_hind.shoulder_deg = get_resolved_hind(config.ik.shoulder.id);
-        resolved_stand_up_joints_hind.femur_deg = get_resolved_hind(config.ik.femur.id);
-        resolved_stand_up_joints_hind.tibia_deg = get_resolved_hind(config.ik.tibia.id);
+      IkSolver::Effector effector_G;
+      effector_G.pose = pose_G;
 
-        stand_up_R = pose_R_hind;
-      }
+      const auto resolved = ik.Inverse(effector_G, {});
+      auto get_resolved = [&](int id) {
+        MJ_ASSERT(!!resolved);
+        for (const auto& joint_angle : *resolved) {
+          if (joint_angle.id == id) { return joint_angle.angle_deg; }
+        }
+        mjlib::base::AssertNotReached();
+      };
+
+      resolved_stand_up_joints.shoulder_deg = get_resolved(config.ik.shoulder.id);
+      resolved_stand_up_joints.femur_deg = get_resolved(config.ik.femur.id);
+      resolved_stand_up_joints.tibia_deg = get_resolved(config.ik.tibia.id);
 
       shoulder_clearance_deg =
           ((config.pose_BG.translation().y() < 0.0) ? 1.0 : -1.0) *
@@ -133,7 +111,7 @@ struct QuadrupedContext : boost::noncopyable {
           stand_up.shoulder_clearance_deg;
 
       //MAYBE TODO : add stand_up_R_front and hind ?
-      //stand_up_R = pose_R_front;
+      stand_up_R = pose_R;
       base::Point3D tf = config.pose_BG.translation();
       idle_R = base::Point3D(
           idle_x * ((tf.x() > 0.0) ? 1.0 : -1.0),
